@@ -7,7 +7,7 @@ const User = require('./models/User');
 require('dotenv').config();
 
 const app = express();
-const port = 3000;
+const port = 4400;
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -86,7 +86,7 @@ app.post('/users', authenticateToken, async (req, res) => {
 app.get('/users', authenticateToken, async (req, res) => {
     try {
         const users = User.findAll();
-        res.json(user);
+        res.json(users);
     } catch (error) {
         res.status(500).json({ error: error.message })
     }
