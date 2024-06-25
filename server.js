@@ -55,7 +55,8 @@ app.post('/login', async (req, res) => {
 
 // Middleware to protect routes
 const authenticateToken = (req, res, next) => {
-    const token = req.header('Authorization');
+    const token = req.headers.authorization?.split(" ")[1];
+    //  return res.status(200).json({token : token});
     if (!token) return res.status(401).json({ error: 'Access denied' });
     try {
         const verified = jwt.verify(token, SECRET_KEY);
@@ -82,13 +83,28 @@ app.post('/users', authenticateToken, async (req, res) => {
     }
 })
 
-// Read
+// Read All
 app.get('/users', authenticateToken, async (req, res) => {
     try {
         const users = User.findAll();
         res.json(users);
     } catch (error) {
         res.status(500).json({ error: error.message })
+    }
+})
+
+// Read Single User
+app.get('/users/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findByPk(id);
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).json({ error: "User not found" })
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message })
     }
 })
 
